@@ -3,7 +3,7 @@ import RateCard from './RateCard';
 import { useForexData } from '../../hooks/useForexData';
 
 const RatesGrid = () => {
-    const { rates, loading, getFormattedRate, getChange, lastUpdate } = useForexData();
+    const {loading, getFormattedRate, getChange, lastUpdate } = useForexData();
 
     const cards = [
         {
