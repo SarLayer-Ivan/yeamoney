@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { INITIAL_BALANCE } from '../utils/constants';
 
 const AuthContext = createContext();
 
@@ -14,18 +15,66 @@ export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Загрузка пользователей из localStorage
     const getUsers = () => {
         const stored = localStorage.getItem('finDash_users');
         return stored ? JSON.parse(stored) : [];
     };
 
-    // Сохранение пользователей в localStorage
     const saveUsers = (users) => {
         localStorage.setItem('finDash_users', JSON.stringify(users));
     };
 
-    // Инициализация БД с демо-пользователем
+    // Обновление баланса пользователя
+    const updateBalance = (newBalance) => {
+        if (!currentUser) return false;
+
+        const users = getUsers();
+        const userIndex = users.findIndex(u => u.id === currentUser.id);
+
+        if (userIndex !== -1) {
+            users[userIndex].balance = newBalance;
+            saveUsers(users);
+
+            const updatedUser = { ...currentUser, balance: newBalance };
+            setCurrentUser(updatedUser);
+            localStorage.setItem('finDash_currentUser', JSON.stringify(updatedUser));
+            return true;
+        }
+        return false;
+    };
+
+    // Пополнение баланса
+    const deposit = (amount) => {
+        if (!currentUser) return { success: false, error: 'Пользователь не авторизован' };
+        if (amount <= 0) return { success: false, error: 'Сумма должна быть положительной' };
+
+        const newBalance = (currentUser.balance || 0) + amount;
+        updateBalance(newBalance);
+        return { success: true, newBalance };
+    };
+
+    // Списание с баланса (для переводов)
+    const withdraw = (amount) => {
+        if (!currentUser) return { success: false, error: 'Пользователь не авторизован' };
+        if (amount <= 0) return { success: false, error: 'Сумма должна быть положительной' };
+
+        const currentBalance = currentUser.balance || 0;
+
+        // Проверка на нулевой баланс
+        if (currentBalance === 0) {
+            return { success: false, error: 'У вас недостаточно средств. Пополните баланс.' };
+        }
+
+        // Проверка на недостаток средств
+        if (currentBalance < amount) {
+            return { success: false, error: `У вас недостаточно средств. Доступно: $${currentBalance.toFixed(2)}` };
+        }
+
+        const newBalance = currentBalance - amount;
+        updateBalance(newBalance);
+        return { success: true, newBalance };
+    };
+
     useEffect(() => {
         const users = getUsers();
         if (users.length === 0) {
@@ -34,6 +83,7 @@ export const AuthProvider = ({ children }) => {
                 email: 'demo@finhub.com',
                 password: 'demo123',
                 name: 'Демо Пользователь',
+                balance: INITIAL_BALANCE,
                 cards: [
                     { id: 1, number: '4242', bank: 'Visa', full: '•••• 4242' },
                     { id: 2, number: '8888', bank: 'MasterCard', full: '•••• 8888' }
@@ -42,7 +92,6 @@ export const AuthProvider = ({ children }) => {
             saveUsers([defaultUser]);
         }
 
-        // Проверка сохраненной сессии
         const savedUser = localStorage.getItem('finDash_currentUser');
         if (savedUser) {
             try {
@@ -81,6 +130,7 @@ export const AuthProvider = ({ children }) => {
             email,
             password,
             name: name || 'Пользователь',
+            balance: INITIAL_BALANCE,
             cards: [
                 { id: Date.now(), number: '4242', bank: 'Visa', full: '•••• 4242' }
             ]
@@ -120,6 +170,9 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         updateUserCards,
+        updateBalance,
+        deposit,
+        withdraw,
         loading,
         isAuthenticated: !!currentUser
     };

@@ -315,3 +315,100 @@ hr {
     border: none;
     border-top: 1px solid var(--border-color);
 }
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+/* Анимация для успешного перевода */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.transfer-result.success {
+    animation: fadeIn 0.3s ease, pulse 0.5s ease;
+}
+
+.transfer-result.error {
+    animation: shake 0.3s ease;
+}
+
+/* Добавьте в конец файла */
+
+.chart-container {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border-color);
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Адаптивность для графика */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 350px;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        height: 300px;
+        padding: 12px;
+    }
+}
+
+/* Стили для кнопок переключения графика */
+.chart-tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.chart-tab:hover {
+    background: var(--bg-primary);
+}
+
+.chart-tab.active {
+    border-color: var(--accent);
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent);
+    font-weight: 600;
+}

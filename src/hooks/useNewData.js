@@ -8,13 +8,17 @@ export const useNewsData = () => {
 
     const loadNews = useCallback(async () => {
         try {
+            console.log('📰 useNewsData - loading news...');
             setLoading(true);
+
             const newsData = await fetchNews();
+            console.log('📰 useNewsData - received news:', newsData);
+
             setNews(newsData.slice(0, 5));
             setError(null);
         } catch (e) {
+            console.error('❌ useNewsData - error:', e);
             setError('Ошибка загрузки новостей');
-            console.error(e);
         } finally {
             setLoading(false);
         }
@@ -22,6 +26,11 @@ export const useNewsData = () => {
 
     useEffect(() => {
         loadNews();
+
+        // Обновление каждые 10 минут
+        const interval = setInterval(loadNews, 600000);
+
+        return () => clearInterval(interval);
     }, [loadNews]);
 
     return {

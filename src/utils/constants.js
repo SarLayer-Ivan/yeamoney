@@ -1,6 +1,7 @@
+// ✅ ВАШИ API КЛЮЧИ
 export const CONFIG = {
-    ALPHA_VANTAGE_KEY: 'ВАШ_API_КЛЮЧ_ALPHA_VANTAGE', // Замените на свой
-    NEWS_API_KEY: 'ВАШ_API_КЛЮЧ_NEWSAPI',           // Замените на свой
+    ALPHA_VANTAGE_KEY: 'V0YIABXKD1QOPB6',
+    NEWS_API_KEY: '4f854cbfa5b544f4b531c242bb986aff',
 };
 
 export const CURRENCY_PAIRS = [
@@ -15,4 +16,4 @@ export const MOCK_RATES = {
     'USDJPY': 148.35,
 };
 
-export const MOCK_BTC_PRICE = '67250.00';
+export const INITIAL_BALANCE = 10000;
